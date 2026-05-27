@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= book.title %></title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/reader.css">
+    <% if (book.fileFormat === 'epub') { %>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <% } %>
+</head>
+<body>
+
+    <div id="bookData"
+     data-file="<%= book.bookFile %>"
+     data-format="<%= book.fileFormat %>"
+     data-id="<%= book._id %>"
+     data-progress="<%= book.readingProgress || 0 %>"
+     data-currentpage="<%= book.currentPage || 0 %>"
+     data-totalpages="<%= book.pages || 0 %>"
+     data-bookmarks='<%- JSON.stringify(book.readerBookmarks || []) %>'
+     data-notes='<%- JSON.stringify(book.readerNotes || []) %>'
+     style="display:none">
+</div>
+
+    <header class="reader-header">
+        <div class="header-left">
+            <a href="/books" class="btn-back">← Wróć</a>
+            <span class="book-title-header"> <%= book.title %> — <%= book.author %></span>
+        </div>
+        <div class="header-right">
+            <% if (book.fileFormat !== 'pdf') { %>
+            <button class="header-btn" id="tocBtn" onclick="toggleToc()">☰</button>
+            <button class="header-btn" id="settingsBtn" onclick="toggleSettings()">⚙</button>
+            <% } %>
+        </div>
+    </header>
+
+    <div class="font-panel" id="fontPanel">
+        <label>Rozmiar czcionki</label>
+        <div class="font-size-controls">
+            <button onclick="changeFontSize(-1)">−</button>
+            <span id="fontSizeLabel">18px</span>
+            <button onclick="changeFontSize(1)">+</button>
+        </div>
+        <label>Motyw</label>
+        <div class="theme-row">
+            <button class="theme-btn theme-sepia" onclick="setTheme('sepia', this)">Sepia</button>
+            <button class="theme-btn theme-white" onclick="setTheme('white', this)">Biały</button>
+            <button class="theme-btn theme-dark"  onclick="setTheme('dark', this)">Ciemny</button>
+        </div>
+    </div>
+
+    <div class="reader-body">
+
+        <% if (book.fileFormat === 'pdf') { %>
+            <iframe src="<%= book.bookFile %>" class="pdf-viewer" type="application/pdf"></iframe>
+
+        <% } else { %>
+            <nav class="toc-sidebar" id="tocSidebar">
+                <div class="sidebar-tabs">
+                    <button class="sidebar-tab active" onclick="switchTab('toc', this)">Spis</button>
+                    <button class="sidebar-tab" onclick="switchTab('bookmarks', this)">Zakładki</button>
+                    <button class="sidebar-tab" onclick="switchTab('notes', this)">Notatki</button>
+                </div>
+                <div class="tab-content active" id="tab-toc">
+                    <div class="toc-list" id="tocList"></div>
+                </div>
+                <div class="tab-content" id="tab-bookmarks">
+                    <div class="toc-list" id="bookmarksList">
+                        <p class="sidebar-empty">Brak zakładek</p>
+                    </div>
+                </div>
+                <div class="tab-content" id="tab-notes">
+                    <div class="toc-list" id="notesList">
+                        <p class="sidebar-empty">Brak notatek</p>
+                    </div>
+                </div>
+            </nav>
+
+            <main class="reading-area" id="readingArea">
+                <div class="book-content" id="bookContent">
+                    <div class="loading-screen">
+                        <div class="spinner"></div>
+                        <span>Ładowanie książki...</span>
+                    </div>
+                </div>
+            </main>
+        <% } %>
+    </div>
+    <div class="note-popup" id="notePopup" style="display:none">
+        <div class="note-popup-inner">
+            <p class="note-selected-text" id="noteSelectedText"></p>
+            <textarea id="noteTextInput" placeholder="Twoja notatka..." rows="4"></textarea>
+            <div class="note-popup-actions">
+                <button class="btn-note-save" onclick="saveNote()">Zapisz</button>
+                <button class="btn-note-cancel" onclick="closeNotePopup()">Anuluj</button>
+            </div>
+        </div>
+    </div>
+
+    <% if (book.fileFormat !== 'pdf') { %>
+    <div class="status-bar">
+        <span id="statusChapter">—</span>
+        <span id="statusPage">Str. —</span>
+        <span id="statusTime">—</span>
+        <span id="statusPercent">0%</span>
+    </div>
+    <% } %>
+
+    <div class="progress-bar-thin">
+        <div class="progress-fill-thin" id="progressFill"></div>
+    </div>
+
+    <script src="/js/reader-ui.js"></script>
+    <% if (book.fileFormat === 'fb2') { %>
+        <script src="/js/reader-fb2.js"></script>
+    <% } else if (book.fileFormat === 'epub') { %>
+        <script src="/js/reader-epub.js"></script>
+    <% } %>
+
+</body>
+</html>

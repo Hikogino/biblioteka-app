@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Biblioteka</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <%- typeof extraStyles !== 'undefined' ? extraStyles : '' %>
+</head>
+<body>
+    <div class="fireflies" id="fireflies"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-title">BIBLIOTEKA</span>
+                <span class="logo-subtitle">Świat książek</span>
+            </div>
+            <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+        </div>
+
+        <nav class="menu">
+            <a href="/" class="menu-item <%= typeof isDashboard !== 'undefined' && isDashboard ? 'active' : '' %>">
+                <span>Strona główna</span>
+            </a>
+            <a href="/books" class="menu-item <%= typeof isBooks !== 'undefined' && isBooks ? 'active' : '' %>">
+                <span>Moje książki</span>
+            </a>
+            <a href="/goals" class="menu-item <%= typeof isGoals !== 'undefined' && isGoals ? 'active' : '' %>">
+                <span>Cele</span>
+            </a>
+            <a href="/stats" class="menu-item <%= typeof isStats !== 'undefined' && isStats ? 'active' : '' %>">
+                <span>Analityka</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            ✦ TWOJA BIBLIOTEKA ✦
+        </div>
+    </aside>
+
+   <div class="topbar">
+    <button class="hamburger" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <span class="topbar-title">✦ BIBLIOTEKA ✦</span>
+    
+    <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+    <div style="margin-left:auto; display:flex; align-items:center; gap:12px;">
+        <span style="font-family:'Inter',sans-serif; font-size:13px; color:var(--text-muted);">
+            <%= currentUser.username %>
+        </span>
+        <a href="/logout" style="
+            font-family:'Inter',sans-serif;
+            font-size:12px;
+            color:var(--text-muted);
+            text-decoration:none;
+            border:1px solid var(--border);
+            padding:6px 14px;
+            border-radius:6px;
+            transition:all 0.2s;
+        ">Wyloguj</a>
+    </div>
+    <% } %>
+</div>
+
+    <div class="app-container">
+        <main class="main-content">
+            <%- body %>
+        </main>
+    </div>
+
+    <%- typeof extraScripts !== 'undefined' ? extraScripts : '' %>
+
+    <script>
+    const container = document.getElementById('fireflies');
+    for (let i = 0; i < 20; i++) {
+        const fly = document.createElement('div');
+        fly.className = 'firefly';
+        fly.style.left = Math.random() * 100 + '%';
+        fly.style.animationDuration = (8 + Math.random() * 12) + 's';
+        fly.style.animationDelay = (Math.random() * 10) + 's';
+        fly.style.width = fly.style.height = (2 + Math.random() * 3) + 'px';
+        container.appendChild(fly);
+    }
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('sidebarOverlay').classList.toggle('open');
+    }
+    function closeSidebar() {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('open');
+    }
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeSidebar();
+    });
+</script>
+</body>
+</html>

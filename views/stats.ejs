@@ -1,0 +1,155 @@
+<h1>Analityka</h1>
+<div class="section">
+    <h2>Tempo czytania</h2>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value"><%= avgPagesPerDay7 %></div>
+            <div class="stat-label">str/dzień (7 dni)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value"><%= avgPagesPerDay30 %></div>
+            <div class="stat-label">str/dzień (30 dni)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value"><%= booksThisMonth %></div>
+            <div class="stat-label">książek w tym miesiącu</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value"><%= booksThisYear %></div>
+            <div class="stat-label">książek w tym roku</div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Aktywność (ostatnie 30 dni)</h2>
+    <div class="card">
+        <canvas id="readingChart" height="100"></canvas>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Porównanie okresów</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div class="card">
+            <h3 style="margin-bottom:16px;">Strony</h3>
+            <div class="compare-row">
+                <span class="compare-label">Ten tydzień</span>
+                <span class="compare-value"><%= pagesThisWeek %> str.</span>
+                <% if (pagesLastWeek > 0) { %>
+                    <span class="compare-delta <%= pagesThisWeek >= pagesLastWeek ? 'positive' : 'negative' %>">
+                        <%= pagesThisWeek >= pagesLastWeek ? '▲' : '▼' %>
+                        <%= Math.abs(Math.round((pagesThisWeek - pagesLastWeek) / pagesLastWeek * 100)) %>%
+                    </span>
+                <% } %>
+            </div>
+            <div class="compare-row muted">
+                <span class="compare-label">Poprzedni tydzień</span>
+                <span class="compare-value"><%= pagesLastWeek %> str.</span>
+            </div>
+            <hr style="margin:12px 0; border:none; border-top:1px solid #eee;">
+            <div class="compare-row">
+                <span class="compare-label">Ten miesiąc</span>
+                <span class="compare-value"><%= pagesThisMonth %> str.</span>
+                <% if (pagesLastMonth > 0) { %>
+                    <span class="compare-delta <%= pagesThisMonth >= pagesLastMonth ? 'positive' : 'negative' %>">
+                        <%= pagesThisMonth >= pagesLastMonth ? '▲' : '▼' %>
+                        <%= Math.abs(Math.round((pagesThisMonth - pagesLastMonth) / pagesLastMonth * 100)) %>%
+                    </span>
+                <% } %>
+            </div>
+            <div class="compare-row muted">
+                <span class="compare-label">Poprzedni miesiąc</span>
+                <span class="compare-value"><%= pagesLastMonth %> str.</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-bottom:16px;">Książki</h3>
+            <div class="compare-row">
+                <span class="compare-label">Ten miesiąc</span>
+                <span class="compare-value"><%= booksThisMonth %> książek</span>
+                <% if (booksLastMonth > 0) { %>
+                    <span class="compare-delta <%= booksThisMonth >= booksLastMonth ? 'positive' : 'negative' %>">
+                        <%= booksThisMonth >= booksLastMonth ? '▲' : '▼' %>
+                        <%= Math.abs(Math.round((booksThisMonth - booksLastMonth) / booksLastMonth * 100)) %>%
+                    </span>
+                <% } %>
+            </div>
+            <div class="compare-row muted">
+                <span class="compare-label">Poprzedni miesiąc</span>
+                <span class="compare-value"><%= booksLastMonth %> książek</span>
+            </div>
+            <hr style="margin:12px 0; border:none; border-top:1px solid #eee;">
+            <div class="compare-row">
+                <span class="compare-label">Ten rok</span>
+                <span class="compare-value"><%= booksThisYear %> książek</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div class="card">
+            <h3>Top gatunki</h3>
+            <% if (genreStats.length > 0) { %>
+                <div class="stats-list">
+                    <% genreStats.forEach((genre, index) => { %>
+                        <div class="stats-item">
+                            <span class="stats-rank"><%= index + 1 %>.</span>
+                            <span class="stats-name"><%= genre._id %></span>
+                            <span class="stats-count"><%= genre.count %></span>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <p style="text-align:center; color:#7f8c8d;">Brak danych</p>
+            <% } %>
+        </div>
+        <div class="card">
+            <h3>Top autorzy</h3>
+            <% if (authorStats.length > 0) { %>
+                <div class="stats-list">
+                    <% authorStats.forEach((author, index) => { %>
+                        <div class="stats-item">
+                            <span class="stats-rank"><%= index + 1 %>.</span>
+                            <span class="stats-name"><%= author._id %></span>
+                            <span class="stats-count"><%= author.count %></span>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <p style="text-align:center; color:#7f8c8d;">Brak danych</p>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<script src="/chartjs/chart.umd.min.js"></script>
+<script>
+    const chartData = <%- chartData %>;
+    const ctx = document.getElementById('readingChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.map(d => d.label),
+            datasets: [{
+                label: 'Strony',
+                data: chartData.map(d => d.pages),
+                backgroundColor: 'rgba(52, 152, 219, 0.6)',
+                borderColor: 'rgba(52, 152, 219, 1)',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true },
+                x: { ticks: { maxRotation: 45, font: { size: 10 } } }
+            }
+        }
+    });
+</script>

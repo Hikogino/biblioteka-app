@@ -1,44 +1,97 @@
-<!DOCTYPE html>
-<html lang="en">
-    <%- include('./layouts/head.ejs') %>
-    <body>
-        <%- include('./partials/nav.ejs') %>
-        <h1>List of Books</h1>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Genre</th>
-                    <th>Year</th>
-                    <th>Notes</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% books.forEach(function(book) { %>
-                    <tr class="book-item">
-                        <td><%= book.title %></td>
-                        <td><%= book.author %></td>
-                        <td><%= book.genre %></td>
-                        <td><%= book.year %></td>
-                        <td><%= book.notes %></td>
-                        <td>
-                            <a href="/change/<%= book.id %>" class="btn btn-primary btn-sm">
-                                <i class="fas fa-edit"></i> Change
-                            </a>
-                            <form action="/delete/<%= book._id %>?_method=DELETE" method="post" style="display: inline;">
-                                <button class="btn btn-danger btn-sm" data-id="<%= book._id %>">
-                                    <i class="fas fa-trash-alt"></i> Delete
-                                </button>
+<%
+function genreColor(genre) {
+    const colors = {
+        'fantasy':         'linear-gradient(135deg, #1a2a4a, #2a1a3a)',
+        'science fiction': 'linear-gradient(135deg, #0a2a3a, #1a3a2a)',
+        'romance':         'linear-gradient(135deg, #3a1a2a, #2a0a1a)',
+        'thriller':        'linear-gradient(135deg, #1a1a0a, #2a1a0a)',
+        'horror':          'linear-gradient(135deg, #0a0a1a, #1a0a0a)',
+        'historia':        'linear-gradient(135deg, #2a1a0a, #3a2a0a)',
+        'biografia':       'linear-gradient(135deg, #1a2a1a, #0a1a0a)',
+        'kryminał':        'linear-gradient(135deg, #1a0a0a, #2a0a0a)',
+        'przygodowa':      'linear-gradient(135deg, #0a1a2a, #1a2a1a)',
+        'inne':            'linear-gradient(135deg, #1a1a2a, #0a1a1a)'
+    };
+    const key = (genre || '').toLowerCase();
+    return colors[key] || 'linear-gradient(135deg, #1a2a1a, #0d1a10)';
+}
+%>
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+    <h1>Moje książki</h1>
+    <a href="/create" class="btn-primary">+ Dodaj książkę</a>
+</div>
+
+<% if (books.length === 0) { %>
+    <div class="card" style="text-align:center; padding:60px;">
+        <p style="font-size:48px;">📚</p>
+        <p style="color:#7f8c8d; margin-top:12px;">Nie masz jeszcze żadnych książek.</p>
+        <a href="/create" class="btn-primary" style="margin-top:20px; display:inline-block;">
+            Dodaj pierwszą książkę
+        </a>
+    </div>
+<% } else { %>
+    <div class="books-grid">
+        <% books.forEach(function(book) { %>
+            <div class="book-card">
+                <div class="book-cover">
+                    <% if (book.coverImage) { %>
+                        <img src="<%= book.coverImage %>" alt="<%= book.title %>" loading="lazy">
+                    <% } else { %>
+                        <div class="book-cover-placeholder" style="background-image: <%= genreColor(book.genre) %>">
+                            <span class="book-cover-letter"><%= book.title.charAt(0).toUpperCase() %></span>
+                        </div>
+                    <% } %>
+
+                    <div class="book-overlay">
+                        <div class="book-overlay-content">
+                            <h3 class="overlay-title"><%= book.title %></h3>
+                            <p class="overlay-author"><%= book.author %></p>
+                            <span class="overlay-genre"><%= book.genre %></span>
+                            <p class="overlay-year"><%= book.year %></p>
+
+                            <% if (book.notes) { %>
+                                <p class="overlay-notes">"<%= book.notes.substring(0, 80) %><%= book.notes.length > 80 ? '...' : '' %>"</p>
+                            <% } %>
+
+                            <div class="overlay-status">
+                                <% if (book.read) { %>
+                                    <span class="status-badge status-read">Przeczytana</span>
+                                <% } else { %>
+                                    <span class="status-badge status-reading">Czytam</span>
+                                <% } %>
+                            </div>
+
+                            <div class="overlay-actions">
+                                <% if (book.bookFile) { %>
+                                    <a href="/read/<%= book._id %>" class="overlay-btn btn-read">Czytaj</a>
+                                <% } %>
+                                <a href="/change/<%= book._id %>" class="overlay-btn btn-edit">Edytuj</a>
+                                <form action="/delete/<%= book._id %>?_method=DELETE" method="post" style="display:inline;">
+                                    <button class="overlay-btn btn-delete" type="submit">Usuń</button>
+                                </form>
+                            </div>
+
+                            <form action="/read/<%= book._id %>" method="post" style="margin-top:8px;">
+                                <label class="toggle-read">
+                                    <input type="checkbox" name="read"
+                                           onchange="this.form.submit()"
+                                           <%= book.read ? 'checked' : '' %>>
+                                    <span>Oznacz jako przeczytaną</span>
+                                </label>
                             </form>
-                        </td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    </body>
-</html>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="book-info">
+                    <p class="book-title-small"><%= book.title %></p>
+                    <p class="book-author-small"><%= book.author %></p>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+<% } %>
 
 
 

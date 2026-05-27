@@ -1,0 +1,36 @@
+<div class="auth-card">
+    <div class="auth-logo">
+        <div class="auth-logo-title">BIBLIOTEKA</div>
+        <div class="auth-logo-subtitle">Świat książek</div>
+    </div>
+
+    <h2 class="auth-title">Rejestracja</h2>
+
+    <% if (error) { %>
+        <div class="auth-error"><%= error %></div>
+    <% } %>
+
+    <form method="post" action="/register">
+        <div class="form-group">
+            <label>Nazwa użytkownika</label>
+            <input type="text" name="username" required placeholder="TwojaNazwa" autofocus>
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" required placeholder="twoj@email.com">
+        </div>
+        <div class="form-group">
+            <label>Hasło</label>
+            <input type="password" name="password" required placeholder="min. 6 znaków">
+        </div>
+        <div class="form-group">
+            <label>Powtórz hasło</label>
+            <input type="password" name="password2" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn-auth">Rozpocznij przygodę ✦</button>
+    </form>
+
+    <div class="auth-link">
+        Masz już konto? <a href="/login">Zaloguj się</a>
+    </div>
+</div>

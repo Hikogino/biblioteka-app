@@ -1,0 +1,155 @@
+<h1>Moje cele czytelnicze</h1>
+<div class="stats-grid" style="margin-bottom:30px;">
+    <div class="stat-card">
+        <div class="stat-value"><%= totalBooks %></div>
+        <div class="stat-label">Przeczytane</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value"><%= pagesToday %></div>
+        <div class="stat-label">Strony dziś</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value"><%= pagesThisWeek %></div>
+        <div class="stat-label">Strony w tym tygodniu</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value"><%= booksThisYear %></div>
+        <div class="stat-label">Książki w tym roku</div>
+    </div>
+</div>
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <h2>Cele</h2>
+    <button onclick="toggleGoalForm()" class="btn-primary">+ Dodaj cel</button>
+</div>
+
+<div id="goalForm" class="card" style="display:none; margin-bottom:20px;">
+    <h3 style="margin-bottom:16px; font-family:'Cinzel',serif;">Nowy cel</h3>
+    <form method="post" action="/goals/create">
+
+        <div class="form-group">
+            <label>Typ celu</label>
+            <select name="goalKind" id="goalKind" onchange="toggleGoalKind(this.value)">
+                <option value="general">Ogólny (wszystkie książki)</option>
+                <option value="book">Na konkretną książkę</option>
+            </select>
+        </div>
+
+        <div id="generalGoal">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Typ</label>
+                    <select name="type">
+                        <option value="książki">Liczba książek</option>
+                        <option value="strony">Liczba stron</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Cel (liczba)</label>
+                    <input type="number" name="target" min="1" placeholder="np. 50">
+                </div>
+                <div class="form-group">
+                    <label>Okres</label>
+                    <select name="period">
+                        <option value="dzień">Dzień</option>
+                        <option value="tydzień">Tydzień</option>
+                        <option value="miesiąc">Miesiąc</option>
+                        <option value="rok">Rok</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+<div id="bookGoal" style="display:none;">
+    <div class="form-row">
+        <div class="form-group">
+            <label>Książka</label>
+            <select name="bookId">
+                <option value="">Wybierz książkę...</option>
+                <% userBooks.forEach(book => { %>
+                    <option value="<%= book._id %>">
+                        <%= book.title %> — <%= book.author %>
+                    </option>
+                <% }) %>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Strony</label>
+            <input type="number" name="bookTarget" min="1" placeholder="np. 30">
+        </div>
+        <div class="form-group">
+            <label>Okres</label>
+            <select name="bookPeriod">
+                <option value="dzień">Dzień</option>
+                <option value="tydzień">Tydzień</option>
+                <option value="miesiąc">Miesiąc</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Dodaj</button>
+            <button type="button" onclick="toggleGoalForm()" class="btn-secondary">Anuluj</button>
+        </div>
+    </form>
+</div>
+
+<% if (goals.length === 0) { %>
+    <div class="card">
+        <p style="text-align:center; color:var(--text-muted); padding:20px;">
+            Nie masz jeszcze żadnych celów. Dodaj pierwszy!
+        </p>
+    </div>
+<% } else { %>
+    <% goals.forEach(goal => { %>
+        <div class="card goal-card">
+            <div class="goal-header">
+                <div>
+                    <h3>
+                        <% if (goal.bookId) { %>
+                            <%= goal.bookTitle %> — <%= goal.target %> str. / <%= goal.period %>
+                        <% } else { %>
+                            <%= goal.target %> <%= goal.type %> / <%= goal.period %>
+                        <% } %>
+                    </h3>
+                    <p style="color:var(--text-muted); font-size:13px; margin-top:6px; font-family:'Inter',sans-serif;">
+                        Aktualnie: <strong><%= goal.current %></strong>
+                        · Prognoza: 
+                        <strong style="color:<%= goal.onTrack ? '#4aa354' : '#e74c3c' %>">
+                            <%= goal.forecast %>
+                        </strong>
+                        <% if (goal.onTrack) { %>
+                            · Na dobrej drodze!
+                        <% } else { %>
+                            · Trzeba przyspieszyć
+                        <% } %>
+                    </p>
+                </div>
+                <form action="/goals/delete/<%= goal._id %>?_method=DELETE" method="post">
+                    <button class="btn-danger-small" type="submit">Usuń</button>
+                </form>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width:<%= goal.progress %>%"></div>
+            </div>
+            <p class="progress-text">
+                <%= goal.progress %>% wykonane (<%= goal.current %> / <%= goal.target %>)
+            </p>
+        </div>
+    <% }) %>
+<% } %>
+
+<script>
+    function toggleGoalForm() {
+        const form = document.getElementById('goalForm');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function toggleGoalKind(value) {
+        document.getElementById('generalGoal').style.display = 
+            value === 'general' ? 'block' : 'none';
+        document.getElementById('bookGoal').style.display = 
+            value === 'book' ? 'block' : 'none';
+    }
+</script>

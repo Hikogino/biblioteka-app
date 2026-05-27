@@ -1,0 +1,137 @@
+<div class="welcome">
+    <h1>Witaj!</h1>
+    <p>
+        <% const hour = new Date().getHours(); %>
+        <% if (hour < 12) { %>Dzień dobry! Gotowy na poranną lekturę?
+        <% } else if (hour < 18) { %>Miłego popołudnia! Czas na kilka stron.
+        <% } else { %>Dobry wieczór! Idealny czas na czytanie.
+        <% } %>
+    </p>
+</div>
+<% if (lastReadBook) { %>
+<div class="card continue-reading-card">
+    <div class="continue-reading-inner">
+        <div class="continue-cover">
+            <% if (lastReadBook.coverImage) { %>
+                <img src="<%= lastReadBook.coverImage %>" alt="<%= lastReadBook.title %>">
+            <% } else { %>
+                <div class="continue-cover-placeholder">
+                    <%= lastReadBook.title.charAt(0).toUpperCase() %>
+                </div>
+            <% } %>
+        </div>
+        <div class="continue-info">
+            <p class="continue-label">Kontynuuj czytanie</p>
+            <h2 class="continue-title"><%= lastReadBook.title %></h2>
+            <p class="continue-author"><%= lastReadBook.author %></p>
+            <div class="continue-progress-bar">
+                <div class="continue-progress-fill" 
+                     style="width:<%= lastReadBook.readingProgress || 0 %>%">
+                </div>
+            </div>
+            <p class="continue-percent">
+                <%= Math.round(lastReadBook.readingProgress || 0) %>% · 
+                Str. <%= lastReadBook.currentPage || 0 %> / <%= lastReadBook.pages || '?' %>
+            </p>
+            <a href="/read/<%= lastReadBook._id %>" class="btn-primary" style="margin-top:16px; display:inline-block;">
+                 Czytaj dalej
+            </a>
+        </div>
+    </div>
+</div>
+<% } %>
+
+<div class="stats-grid" style="margin-bottom:30px;">
+    <div class="stat-card">
+        <i data-lucide="book-check" style="width:28px; height:28px; color: var(--gold-light);"></i>
+        <div class="stat-value"><%= totalBooks %></div>
+        <div class="stat-label">Przeczytane</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value"><%= allBooks %></div>
+        <div class="stat-label">Wszystkie książki</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value"><%= pagesToday %></div>
+        <div class="stat-label">Strony dziś</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value"><%= booksThisYear %></div>
+        <div class="stat-label">Książki w tym roku</div>
+    </div>
+</div>
+
+<% if (mainGoal) { %>
+<div class="card" style="margin-bottom:30px;">
+    <h2> Cel na <%= new Date().getFullYear() %></h2>
+    <div class="goal-info" style="margin:16px 0 8px;">
+        <span style="font-size:24px; font-weight:700; color:#3498db;">
+            <%= booksThisYear %> / <%= mainGoal.target %>
+        </span>
+        <span style="color:#7f8c8d; margin-left:8px;">książek</span>
+    </div>
+    <div class="progress-bar">
+        <div class="progress-fill" style="width:<%= mainGoalProgress %>%"></div>
+    </div>
+    <p class="progress-text"><%= mainGoalProgress %>% wykonane</p>
+</div>
+<% } else { %>
+<div class="card" style="margin-bottom:30px; text-align:center; padding:30px;">
+    <p style="color:#7f8c8d; margin-bottom:16px;">Nie masz jeszcze celu na ten rok.</p>
+    <a href="/goals" class="btn-primary">+ Dodaj cel</a>
+</div>
+<% } %>
+
+<% if (achievements.length > 0) { %>
+<div class="card" style="margin-bottom:24px;">
+    <h2 style="margin-bottom:20px;">Osiągnięcia</h2>
+    <div class="achievements-grid">
+        <% achievements.forEach(a => { %>
+            <div class="achievement-item <%= a.done ? 'done' : 'locked' %>">
+                <div class="achievement-icon"><%= a.icon %></div>
+                <div class="achievement-info">
+                    <p class="achievement-title"><%= a.title %></p>
+                    <p class="achievement-desc"><%= a.desc %></p>
+                </div>
+                <% if (a.done) { %>
+                    <div class="achievement-check">✓</div>
+                <% } else { %>
+                    <div class="achievement-lock">🔒</div>
+                <% } %>
+            </div>
+        <% }) %>
+    </div>
+</div>
+<% } %>
+
+<div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2>Ostatnio dodane</h2>
+        <a href="/books" class="btn-secondary" style="font-size:13px; padding:8px 16px;">
+            Zobacz wszystkie →
+        </a>
+    </div>
+    <div class="recent-books-grid">
+        <% recentBooks.forEach(book => { %>
+            <div class="recent-book-card">
+                <% if (book.coverImage) { %>
+                    <img src="<%= book.coverImage %>" alt="<%= book.title %>" class="recent-cover">
+                <% } else { %>
+                    <div class="recent-cover-placeholder">
+                        <%= book.title.charAt(0).toUpperCase() %>
+                    </div>
+                <% } %>
+                <div class="recent-book-info">
+                    <p class="recent-book-title"><%= book.title %></p>
+                    <p class="recent-book-author"><%= book.author %></p>
+                    <% if (book.bookFile) { %>
+                        <a href="/read/<%= book._id %>" class="btn-primary" 
+                           style="font-size:11px; padding:5px 12px; margin-top:8px; display:inline-block;">
+                            Czytaj
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>

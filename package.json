@@ -11,14 +11,23 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "body-parser": "^1.20.2",
+    "chart.js": "^4.5.1",
+    "connect-mongo": "^3.2.0",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
+    "express-ejs-layouts": "^2.5.1",
+    "express-session": "^1.19.0",
+    "jszip": "^3.10.1",
+    "lucide": "^1.14.0",
     "method-override": "^3.0.0",
     "mongodb": "^6.6.1",
     "mongoose": "^8.3.4",
-    "path": "^0.12.7"
+    "multer": "^2.1.1",
+    "path": "^0.12.7",
+    "xmldom": "^0.6.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"

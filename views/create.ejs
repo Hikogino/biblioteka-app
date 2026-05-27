@@ -1,37 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-  <%- include('./layouts/head.ejs') %>
-<body>
-  <%- include('./partials/nav.ejs') %>
-  <div class="container mt-4">
-    <form id="book-form" method="post" action="/create">
-      <div class="mb-3">
-        <label for="title" class="form-label fw-bold">Title</label>
-        <input type="text" class="form-control" id="title" name="title" required>
-      </div>
-      <div class="mb-3">
-        <label for="author" class="form-label fw-bold">Author</label>
-        <input type="text" class="form-control" id="author" name="author" required>
-      </div>
-      <div class="mb-3">
-        <label for="genre" class="form-label fw-bold">Genre</label>
-        <input type="text" class="form-control" id="genre" name="genre" required>
-      </div>
-      <div class="mb-3">
-        <label for="year" class="form-label fw-bold">Year</label>
-        <input type="number" class="form-control" id="year" name="year" required>
-      </div>
-      <div class="mb-3">
-        <label for="notes" class="form-label fw-bold">Notes</label>
-        <textarea class="form-control" id="notes" name="notes" rows="8"></textarea>
-      </div>
-      <div class="mb-3">
-        <button type="submit" class="btn btn-primary">Create</button>
-      </div>
+<h1>Dodaj nową książkę</h1>
+
+<div class="card">
+    <p style="color:#7f8c8d; margin-bottom:24px;">
+        Prześlij plik książki — tytuł, autor i okładka zostaną wykryte automatycznie.
+        Jeśli coś się nie zgadza, zawsze możesz to zmienić później.
+    </p>
+
+    <form method="post" action="/create" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="bookFile">Plik książki</label>
+            <input type="file" id="bookFile" name="bookFile" 
+                   accept=".pdf,.epub,.fb2" required>
+            <small style="color:#7f8c8d; display:block; margin-top:8px;">
+                Obsługiwane formaty: FB2, EPUB, PDF
+            </small>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Dodaj książkę</button>
+            <a href="/books" class="btn-secondary">Anuluj</a>
+        </div>
     </form>
-  </div>
-</body>
-</html>
+</div>
 
 
 

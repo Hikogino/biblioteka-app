@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Biblioteka</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+    <div class="fireflies" id="fireflies"></div>
+    <div class="forest-mist"></div>
+
+    <div class="auth-container">
+        <%- body %>
+    </div>
+
+    <script>
+        const container = document.getElementById('fireflies');
+        for (let i = 0; i < 20; i++) {
+            const fly = document.createElement('div');
+            fly.className = 'firefly';
+            fly.style.left = Math.random() * 100 + '%';
+            fly.style.animationDuration = (8 + Math.random() * 12) + 's';
+            fly.style.animationDelay    = (Math.random() * 10) + 's';
+            fly.style.width = fly.style.height = (2 + Math.random() * 3) + 'px';
+            container.appendChild(fly);
+        }
+    </script>
+</body>
+</html>
