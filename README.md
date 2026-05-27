@@ -26,4 +26,5 @@ Projekt dyplomowy z informatyki — aplikacja umożliwia śledzenie historii czy
 └── middleware/       # Middleware autoryzacji
 ## Autor
 Karyna Miadouskaya 44967
+
 Praca dyplomowa — 2026
