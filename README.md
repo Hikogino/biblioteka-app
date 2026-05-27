@@ -18,12 +18,15 @@ Projekt dyplomowy z informatyki — aplikacja umożliwia śledzenie historii czy
 - **Biblioteki:** Chart.js, JSZip, bcryptjs, Multer, express-session
 
 ## Struktura projektu
-├── controllers/      # Logika biznesowa
-├── models/           # Modele MongoDB
-├── routes/           # Routing Express
-├── views/            # Szablony EJS
-├── public/           # Pliki statyczne (CSS, JS, obrazy)
-└── middleware/       # Middleware autoryzacji
+
+```
+├── controllers/    # Logika biznesowa
+├── models/         # Modele MongoDB
+├── routes/         # Routing Express
+├── views/          # Szablony EJS
+├── public/         # Pliki statyczne (CSS, JS, obrazy)
+└── middleware/     # Middleware autoryzacji
+```
 ## Autor
 Karyna Miadouskaya 44967
 
